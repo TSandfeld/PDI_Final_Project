@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, 
+  AppRegistry,
   Text, 
   View, 
   Button,
@@ -10,7 +11,6 @@ import { StyleSheet,
   FlatList,
   Alert} from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import { ListItem } from 'react-native-elements';
 
 const realm = require('realm');
 
@@ -44,22 +44,55 @@ export default class EnterReceipt extends React.Component {
     this.state = { 
       items: [{key: "0"},{key: "1"}]
     };
-  
   }
 
   addEntry=()=>{
     var index = this.state.items.length
-    data.push(index.toString());
+    this.state.items.push( {key: index.toString()} );
+    data.push({key: "0", name: "", price: 0.0, quantity: 0});
     console.log(this.state.items)
   }
 
   submitReceipt=()=>{
+    var items = [];
+
+    data.forEach(element => {
+      const item = {
+        name: element.name,
+        price: element.price,
+        quantity: element.quantity,
+      };
+      items.push(item);
+    });
+         
+    realm.open({schema: [receiptSchema, itemSchema]})
+      .then(realm => {
+        realm.write(() => {
+          const receipt = realm.create('Receipt', {
+            date: '14/03/2018',
+            store: 'Netto',
+            items: items,
+          });
+        });
+      });
 
   }
 
-  _onChange=(key, value)=>{
+  changeItemName=(key, value)=>{
     var index = parseInt(key);
     data[index].name = value;
+  }
+
+  changeItemPrice=(key, value)=>{
+    var index = parseInt(key);
+    var cost = parseFloat(value);
+    data[index].price = cost;
+  }
+
+  changeItemQuantity=(key, value)=>{
+    var index = parseInt(key);
+    var quant = parseInt(value);
+    data[index].quantity = quant;
   }
 
   render() {
@@ -81,7 +114,7 @@ export default class EnterReceipt extends React.Component {
           </View>
           <View style={styles.sameLineInput}>
             <TouchableHighlight onPress={this.addEntry}>
-              <Text> Add Item </Text>
+              <Text style={ { color: 'blue' } }> Add Item </Text>
             </TouchableHighlight>
           </View>
         </View>
@@ -93,10 +126,12 @@ export default class EnterReceipt extends React.Component {
                 <View style={styles.sameLineInput}>
                   <Text>Item</Text>
                   <TextInput underlineColorAndroid='transparent' style={styles.inputText} 
-                    onChangeText={ (text) => this._onChange(item.key, text)}></TextInput>
-                  <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}></TextInput>
+                    onChangeText={ (text) => this.changeItemName(item.key, text)}></TextInput>
+                  <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}
+                    onChangeText={ (price) => this.changeItemPrice(item.key, price)}></TextInput>
                   <Text>Kr.</Text>
-                  <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}></TextInput>
+                  <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}
+                    onChangeText={ (quantity) => this.changeItemQuantity(item.key, quantity)}></TextInput>
                   <Text>pcs.</Text>
                 </View>
               }
@@ -104,7 +139,7 @@ export default class EnterReceipt extends React.Component {
         </View>
 
         <View style={styles.bottomContainer}>
-          <TouchableHighlight style={styles.submitButton}>
+          <TouchableHighlight style={styles.submitButton} onPress={this.submitReceipt} >
             <Text> Submit </Text>
           </TouchableHighlight>
         </View>
@@ -219,7 +254,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     width: win.width,
-    height: 40,
+    height: 50,
     backgroundColor: 'lightgreen',
     alignItems: 'center',
     justifyContent: 'center',
