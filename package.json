@@ -17,7 +17,7 @@
     "react-native-svg-charts": "^2.2.3",
     "react-native-vector-icons": "^4.5.0",
     "react-navigation": "^1.0.3",
-    "realm": "^2.3.0"
+    "realm": "^2.2.15"
   },
   "devDependencies": {
     "babel-jest": "22.2.0",

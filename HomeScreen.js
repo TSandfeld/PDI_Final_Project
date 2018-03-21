@@ -37,7 +37,7 @@ export default class HomeScreen extends React.Component {
           <TouchableHighlight onPress={ () => this.props.navigation.navigate('Receipt')} style={styles.buttonEnterReceipt}>
             <Text style={styles.buttonText}>Enter Receipt</Text>
           </TouchableHighlight>
-          <TouchableHighlight onPress={ () => this.props.navigation.navigate('Receipt')} style={styles.buttonEnterReceipt}>
+          <TouchableHighlight onPress={ () => this.props.navigation.navigate('SeeReceipts')} style={styles.buttonEnterReceipt}>
             <Text style={styles.buttonText}>See Receipts</Text>
           </TouchableHighlight>
           <TouchableHighlight onPress={ () => this.props.navigation.navigate('Stats')} style={styles.buttonEnterReceipt}>

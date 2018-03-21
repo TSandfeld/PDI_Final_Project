@@ -5,20 +5,88 @@ import {
     Text,
     View,
     Image,
-    Dimensions
+    Dimensions,
+    Alert
   } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import { AreaChart, BarChart, XAxis, YAxis } from 'react-native-svg-charts'
 import * as shape from 'd3-shape'
+import { realm, itemSchema, receiptSchema } from './EnterReceipt.js';
 
 export default class Statistics extends React.Component {
     static navigationOptions = {
         title: "Statistics"
     };
 
-    render() {
-        const data    = [ 45, 15, 12, 2,]
-        const categories = [ 'Sweets', 'Vegetables', 'Drinks', 'Household Items']
+    constructor(props) {
+        super(props);
+        let receipts = [];
+        this.state = {
+            receiptData: null,
+            chartData: null,
+            loaded: false
+        };
+        realm.open({schema: [itemSchema, receiptSchema]})
+            .then(r => {
+                let data = r.objects('Receipt');
+                console.log(data[0]);
+                
+                this.setState( {
+                    receiptData: data
+                });
+
+                this.retrieveData();
+            });
+
+        
+    }
+
+    loading(){
+        return(<View style={styles.container}><Text>Loading...</Text></View>)
+    }
+
+    retrieveData() {
+        var dataDict = {}
+
+        let receipts = this.state.receiptData;
+        receipts.forEach(element => {
+            console.log("date: " + element.date + ", store:" + element.store, ", items: " + element.items);
+            let list = element.items;
+            list.forEach(item => {
+                console.log("Name: " + item.name + ", Price: " + item.price + ", Quantitity: " + item.quantity);
+                let name = item.name;
+                let totalPrice = item.price * item.quantity;
+                dataDict[name] = totalPrice;
+            });
+        });
+
+        console.log(dataDict);
+        this.setState({chartData: dataDict, loaded: true});
+        this.forceUpdate();
+    }
+
+    makeBarChart() {
+        const chartData = this.state.chartData;
+        console.log("chardata: " + chartData);
+
+        var sortable = [];
+        for (var item in chartData) {
+            sortable.push([item, chartData[item]])
+        }
+
+        sortable.sort(function(a, b) {
+            return b[1] - a[1];
+        });
+
+        const categories = [];
+        const data = [];
+        sortable.forEach(elem => {
+            if (elem[1] > 0) {
+                categories.push(elem[0]);
+                data.push(elem[1]);
+            }
+        })
+
         const barData = [
             {
                 values: data,
@@ -68,6 +136,13 @@ export default class Statistics extends React.Component {
                 </View>
             </View>
         );
+    }
+
+    render() {
+        if (this.state.loaded) {
+            return this.makeBarChart();
+        }
+        return this.loading();
     }
 }
 const win = Dimensions.get('window')

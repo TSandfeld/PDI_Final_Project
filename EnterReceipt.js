@@ -12,9 +12,9 @@ import { StyleSheet,
   Alert} from 'react-native';
 import { StackNavigator } from 'react-navigation';
 
-const realm = require('realm');
+export const realm = require('realm');
 
-const itemSchema = {
+export const itemSchema = {
   name: 'Item',
   properties: {
     name: 'string',
@@ -23,7 +23,7 @@ const itemSchema = {
   }
 }
 
-const receiptSchema = {
+export const receiptSchema = {
   name: 'Receipt',
   properties: {
     date: 'string',
