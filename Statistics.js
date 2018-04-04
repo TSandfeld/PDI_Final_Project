@@ -56,7 +56,9 @@ export default class Statistics extends React.Component {
                 console.log("Name: " + item.name + ", Price: " + item.price + ", Quantitity: " + item.quantity);
                 let name = item.name;
                 let totalPrice = item.price * item.quantity;
-                dataDict[name] = totalPrice;
+                console.log(totalPrice);
+                dataDict[name] = (dataDict[name]) ? dataDict[name] + totalPrice : totalPrice;
+                console.log(dataDict);
             });
         });
 
@@ -67,7 +69,6 @@ export default class Statistics extends React.Component {
 
     makeBarChart() {
         const chartData = this.state.chartData;
-        console.log("chardata: " + chartData);
 
         var sortable = [];
         for (var item in chartData) {

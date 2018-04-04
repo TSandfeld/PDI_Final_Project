@@ -20,6 +20,7 @@ export const itemSchema = {
     name: 'string',
     price: 'double',
     quantity: 'int',
+    category: 'string'
   }
 }
 
@@ -32,7 +33,7 @@ export const receiptSchema = {
   }
 }
 
-var data = [{key: "0", name: "", price: 0.0, quantity: 0}, {key: "1", name: "", price: 0.0, quantity: 0}];
+var data = [{key: "0", name: "", price: 0.0, quantity: 0, category: ""}, {key: "1", name: "", price: 0.0, quantity: 0, category: ""}];
 
 export default class EnterReceipt extends React.Component {
   static navigationOptions = {
@@ -41,41 +42,37 @@ export default class EnterReceipt extends React.Component {
 
   constructor(props) {
     super(props);
+    let date = this.getToday();
+
     this.state = { 
-      items: [{key: "0"},{key: "1"}]
+      items: [{key: "0"},{key: "1"}],
+      store: "",
+      date: date
     };
+  }
+
+  getToday() {
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
+
+    var yyyy = today.getFullYear();
+    if(dd<10){
+        dd='0'+dd;
+    } 
+    if(mm<10){
+        mm='0'+mm;
+    } 
+    var today = dd+'/'+mm+'/'+yyyy;
+
+    return today;
   }
 
   addEntry=()=>{
     var index = this.state.items.length
     this.state.items.push( {key: index.toString()} );
-    data.push({key: "0", name: "", price: 0.0, quantity: 0});
+    data.push({key: index.toString(), name: "", price: 0.0, quantity: 0,category: ""});
     console.log(this.state.items)
-  }
-
-  submitReceipt=()=>{
-    var items = [];
-
-    data.forEach(element => {
-      const item = {
-        name: element.name,
-        price: element.price,
-        quantity: element.quantity,
-      };
-      items.push(item);
-    });
-         
-    realm.open({schema: [receiptSchema, itemSchema]})
-      .then(realm => {
-        realm.write(() => {
-          const receipt = realm.create('Receipt', {
-            date: '14/03/2018',
-            store: 'Netto',
-            items: items,
-          });
-        });
-      });
-
   }
 
   changeItemName=(key, value)=>{
@@ -95,6 +92,30 @@ export default class EnterReceipt extends React.Component {
     data[index].quantity = quant;
   }
 
+  nextButtonPressed=() => {
+    var sortedData = [];
+
+    for (var i = 0; i < data.length; i++) {
+      var item = data[i];
+      if (!(item.name == "") ) {
+        sortedData.push(item);
+      }
+    }
+
+    if (sortedData.length < 1) {
+      Alert.alert("Please enter items into the form before proceeding.")
+    } else {
+      console.log(sortedData);
+      this.props.navigation.navigate('Categories',
+                                     {
+                                       receiptData: sortedData,
+                                       store: this.state.store,
+                                       date: this.state.date
+                                      })
+    }
+
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -105,12 +126,15 @@ export default class EnterReceipt extends React.Component {
 
         <View style={styles.storeDateContainer}>
           <View style={styles.sameLineInput}>
-            <Text> Store </Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputText}></TextInput> 
+            <Text>Store</Text>
+            <TextInput underlineColorAndroid='transparent' style={styles.inputText} 
+            onChangeText={ (text) => this.setState({store: text}) }></TextInput> 
           </View>
           <View style={styles.sameLineInput}>
-            <Text> Date</Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputText}></TextInput> 
+            <Text>Date</Text>
+            <TextInput underlineColorAndroid='transparent' style={styles.inputText} 
+            value={this.state.date} 
+            onChangeText={ (text) => this.setState({date: text})}></TextInput> 
           </View>
           <View style={styles.sameLineInput}>
             <TouchableHighlight onPress={this.addEntry}>
@@ -139,82 +163,11 @@ export default class EnterReceipt extends React.Component {
         </View>
 
         <View style={styles.bottomContainer}>
-          <TouchableHighlight style={styles.submitButton} onPress={this.submitReceipt} >
-            <Text> Submit </Text>
+          <TouchableHighlight style={styles.nextButton} onPress={this.nextButtonPressed} >
+            <Text> Next </Text>
           </TouchableHighlight>
         </View>
 
-        {/* <View style={styles.fieldView}>
-          <View style={styles.sameLineInput}>
-            <Text> Store </Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputText}></TextInput> 
-          </View>
-          <View style={styles.sameLineInput}>
-            <Text> Date</Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputText}></TextInput> 
-          </View>
-          <View style={styles.horiLine}>
-          </View>
-          <View style={styles.sameLineInput}>
-            <Text>Item</Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputText}></TextInput>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}></TextInput>
-            <Text>Kr.</Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}></TextInput>
-            <Text>pcs.</Text>
-          </View>
-          <View style={styles.sameLineInput}>
-            <Text>Item</Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputText}></TextInput>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}></TextInput>
-            <Text>Kr.</Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}></TextInput>
-            <Text>pcs.</Text>
-          </View>
-          <View style={styles.sameLineInput}>
-            <Text>Item</Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputText}></TextInput>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}></TextInput>
-            <Text>Kr.</Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}></TextInput>
-            <Text>pcs.</Text>
-          </View>
-          <View style={styles.sameLineInput}>
-            <Text>Item</Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputText}></TextInput>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}></TextInput>
-            <Text>Kr.</Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}></TextInput>
-            <Text>pcs.</Text>
-          </View>
-          <View style={styles.sameLineInput}>
-            <Text>Item</Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputText}></TextInput>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}></TextInput>
-            <Text>Kr.</Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}></TextInput>
-            <Text>pcs.</Text>
-          </View>
-          <View style={styles.sameLineInput}>
-            <Text>Item</Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputText}></TextInput>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}></TextInput>
-            <Text>Kr.</Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}></TextInput>
-            <Text>pcs.</Text>
-          </View>
-          <View style={styles.sameLineInput}>
-            <Text>Item</Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputText}></TextInput>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}></TextInput>
-            <Text>Kr.</Text>
-            <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}></TextInput>
-            <Text>pcs.</Text>
-          </View>
-          <TouchableHighlight style={styles.buttons}>
-            <Text>Done</Text>
-          </TouchableHighlight>
-        </View> */}
       </View>
     );
   }
@@ -232,8 +185,8 @@ const styles = StyleSheet.create({
   storeDateContainer: {
     flexDirection: 'row',
     backgroundColor: '#fff',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'center',
     width: win.width,
     marginBottom: 20,
   },
@@ -252,10 +205,10 @@ const styles = StyleSheet.create({
     width: win.width,
     height: 100,
   },
-  submitButton: {
+  nextButton: {
     width: win.width,
     height: 50,
-    backgroundColor: 'lightgreen',
+    backgroundColor: 'lightblue',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -289,7 +242,7 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     marginLeft: 4,
-    marginRight: 4,
+    marginRight: 10,
   },
   inputMoney:{
     width: 40,
