@@ -9,6 +9,7 @@ import HomeScreen from './HomeScreen.js';
 import Statistics from './Statistics.js';
 import EnterReceipt from './EnterReceipt.js';
 import SeeReceipts from './SeeReceipts.js';
+import ReceiptView from './ReceiptView.js';
 import { StackNavigator } from 'react-navigation';
 
 
@@ -25,6 +26,7 @@ const RootStack = StackNavigator({
   Receipt: { screen: EnterReceipt },
   SeeReceipts: { screen: SeeReceipts },
   Stats: { screen: Statistics },
+  ReceiptView: {screen: ReceiptView},
 }, 
 {
   initialRouteName: 'Home'
