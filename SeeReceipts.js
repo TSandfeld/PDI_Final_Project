@@ -40,6 +40,7 @@ export default class SeeReceipts extends React.Component {
             this.setState( {
                 receiptData: data
             });
+            console.log(this.state.receiptData);
             this.forceUpdate();
         });
     
@@ -47,6 +48,14 @@ export default class SeeReceipts extends React.Component {
 
   viewReceipt = (item) => {
     this.props.navigation.navigate('ReceiptView',{receiptItems: item.items, store: item.store});
+  }
+
+  aggregatePrices=(items) => {
+    var totalPrice = 0;
+    items.forEach(element => {
+      totalPrice += element.price * element.quantity;
+    });
+    return totalPrice;
   }
 
   render() {
@@ -64,7 +73,7 @@ export default class SeeReceipts extends React.Component {
                   <Text>{item.store}</Text>
                 </View>
                 <View style={styles.priceView}>
-                  <Text style={styles.price}>{item.items[0].price} kr.</Text>
+                  <Text style={styles.price}>{this.aggregatePrices(item.items)} kr.</Text>
                 </View>
               </View>
             </TouchableHighlight>
