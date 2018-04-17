@@ -11,11 +11,12 @@ import { StyleSheet,
   FlatList,
   Alert} from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import { realm, itemSchema, receiptSchema } from './EnterReceipt.js';
+import { realm, itemSchema, receiptSchema, budgetItem, budgetSchema } from './EnterReceipt.js';
+import ModalDropdown from 'react-native-modal-dropdown';
 
 export default class EnterCategories extends React.Component {
   static navigationOptions = {
-    title: "Enter Receipt"
+    title: "Enter Categories"
   };
 
   constructor(props) {
@@ -25,14 +26,15 @@ export default class EnterCategories extends React.Component {
         store: this.props.navigation.state.params.store,
         date: this.props.navigation.state.params.date,
         itemDict: {},
-        loaded: false
+        loaded: false,
+        refresh: false,
     };
 
     this.loadFromRealm()
   }
 
   loadFromRealm() {
-    realm.open({schema: [itemSchema, receiptSchema]})
+    realm.open({schema: [itemSchema, receiptSchema, budgetItem, budgetSchema]})
     .then(r => {
         let data = r.objects('Receipt');
         this.fillItemDict(data);
@@ -68,7 +70,7 @@ export default class EnterCategories extends React.Component {
     });
     console.log(items);
          
-    realm.open({schema: [receiptSchema, itemSchema]})
+    realm.open({schema: [itemSchema, receiptSchema, budgetItem, budgetSchema]})
       .then(realm => {
         realm.write(() => {
           const receipt = realm.create('Receipt', {
@@ -85,31 +87,63 @@ export default class EnterCategories extends React.Component {
 
   addCategoryToItem=(category, item) => {
     item.category = category;
-    console.log(item)
+    console.log(category, item)
     this.state.itemDict[item.name] = category;
+    this.setState({refresh: !this.state.refresh});
+    this._dropdown.select(-1);
+  }
+
+  selectDropdownItem=(category, item) => {
+    item.category = category;
+    this.state.itemDict[item.name] = category;
+    console.log(this.state.itemDict);
+    this.setState({refresh: !this.state.refresh});
   }
 
   render() {
       if (this.state.loaded) {
         return (
         <View style={styles.container}>
-            <View style={styles.imgContainer}>
-            <Image style={styles.imageLogo} source={require('./Images/frontscreen.png')}>
-            </Image>
-            </View>
+            {/* <View style={styles.imgContainer}>
+              <Image style={styles.imageLogo} source={require('./Images/frontscreen.png')}>
+              </Image>
+            </View> */}
 
             <View style={styles.listContainer}>
             <FlatList
                 data={this.state.items}
+                extraData={this.state.refresh}
                 renderItem={({item}) =>
                     <View style={styles.listCell}>
-                        <View style={styles.listCellView}>
+                        <View style={styles.listCellViewLeft}>
                             <Text style={styles.listCellText}> {item.name} </Text>
                         </View>
-                        <View style={styles.listCellView}>
-                            <TextInput underlineColorAndroid='transparent' style={styles.inputText} 
-                            value={this.state.itemDict[item.name]}
-                            onChangeText={ (text) => this.addCategoryToItem(text, item) }/>
+                        <View style={styles.listCellViewRight}>
+                            <TextInput 
+                              underlineColorAndroid='transparent' 
+                              style={styles.inputText} 
+                              placeholder="Enter new category"
+                              value={this.state.itemDict[item.name]}
+                              onChangeText={ (text) => this.addCategoryToItem(text, item) }/>
+                            <Text> Or: </Text>
+                            <ModalDropdown 
+                              ref={el => this._dropdown = el}
+                              style={styles.dropdownMenu}
+                              dropdownTextStyle={styles.dropdownTextStyle}
+                              defaultValue="Select a category"
+                              onSelect={(idx, value) => this.selectDropdownItem(value, item)}
+                              options={
+                                Array.from(
+                                  new Set(
+                                    Object.values(this.state.itemDict)
+                                  )
+                                ).sort(function(a,b) {
+                                  if(a < b) return -1;
+                                  if(a > b) return 1;
+                                  return 0;
+                                })
+                              }
+                            />
                         </View>
                     </View>
                 }
@@ -117,9 +151,9 @@ export default class EnterCategories extends React.Component {
             </View>
 
             <View style={styles.bottomContainer}>
-            <TouchableHighlight style={styles.submitButton} onPress={this.submitReceipt} >
-                <Text> Submit </Text>
-            </TouchableHighlight>
+              <TouchableHighlight style={styles.submitButton} onPress={this.submitReceipt} >
+                  <Text> Submit </Text>
+              </TouchableHighlight>
             </View>
 
         </View>
@@ -154,6 +188,7 @@ const styles = StyleSheet.create({
   },
   imgContainer: {
     flex: 1,
+    height: 25,
   },
   bottomContainer: {
     flex: 0,
@@ -180,6 +215,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: win.width,
+    marginTop: 25,
   },
   listCell: {
     flexDirection: 'row',
@@ -188,8 +224,13 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     marginBottom: cellSideMargin/2,
   },
-  listCellView: {
-    width: win.width/2,
+  listCellViewRight: {
+    width: win.width * (2/3),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  listCellViewLeft: {
+    width: win.width/3,
     justifyContent: 'center',
   },
   listCellText: {
@@ -207,6 +248,19 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     margin: cellSideMargin/2,
-  }
+  },
+  dropdownMenu: {
+    width: 150,
+    height: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: 'lightgray',
+    borderWidth: 1,
+    borderRadius: 1,
+    margin: cellSideMargin/2,
+  }, 
+  dropdownTextStyle: {
+    color: 'black',
+  },
 });
 

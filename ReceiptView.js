@@ -32,13 +32,16 @@ export default class SeeReceipts extends React.Component {
   }
 
 
+  _keyExtractor = (item, index) => index.toString();
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.headLine}>{this.state.store}</Text>
-        <FlatList data={this.state.items}
+        <FlatList 
+          data={this.state.items}
+          keyExtractor={this._keyExtractor}
           renderItem={({item}) =>
-          
           <View style={styles.sameLineContainer}>  
             <View style={styles.alignLeft} >        
                 <Text style={styles.item}>{item.name}</Text>
