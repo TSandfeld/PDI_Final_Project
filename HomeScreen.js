@@ -21,8 +21,7 @@ import {
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import { ProgressCircle }  from 'react-native-svg-charts';
-import { realm, itemSchema, receiptSchema } from './EnterReceipt.js';
-
+import { realm, itemSchema, receiptSchema, budgetItem, budgetSchema } from './EnterReceipt.js';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -34,28 +33,37 @@ export default class HomeScreen extends React.Component {
     let receipts = [];
     this.state = {
         receiptData: null,
+        budgetData: null,
         totalSpent: 0,
-        budget: 10,
+        budget: 0,
         percentageSpent: 0,
         progressColor: 'lightblue',
         textColor: 'green'
     };
-    realm.open({schema: [itemSchema, receiptSchema]})
+
+    this.openRealm();
+  }
+
+  componentDidMount() {
+    this.props.navigation.addListener('willFocus', (val) => {
+      this.openRealm();
+    })
+  }
+
+  openRealm() {
+    realm.open({schema: [itemSchema, receiptSchema, budgetItem, budgetSchema]})
         .then(r => {
             let data = r.objects('Receipt');
+            let budget = r.objects('Budget');
             console.log(data[0]);
             
             this.setState( {
-                receiptData: data
+                receiptData: data,
+                budgetData: budget
             });
 
             this.retrieveData();
         });
-        
-  }
-
-  componentDidMount() {
-    
   }
 
   retrieveData() {
@@ -68,6 +76,19 @@ export default class HomeScreen extends React.Component {
             sum += totalPrice;
         });
     });
+
+    let budgetSum = 0;
+    let budgetItems = this.state.budgetData;
+    let dict = {};
+    budgetItems.forEach(element => {
+      element.budgetItems.forEach(elem => {
+        dict[elem.category] = elem.budget;
+      })
+    });
+    Object.values(dict).forEach(e => {
+      budgetSum += e;
+    })
+    this.setState({budget: budgetSum});
     
     this.setState({totalSpent: sum});
     if(this.state.totalSpent > this.state.budget) {

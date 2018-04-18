@@ -13,6 +13,7 @@ import { StyleSheet,
 import { StackNavigator } from 'react-navigation';
 import { realm, itemSchema, receiptSchema, budgetItem, budgetSchema } from './EnterReceipt.js';
 import ModalDropdown from 'react-native-modal-dropdown';
+import {HomeScreen, Child} from './HomeScreen.js';
 
 export default class EnterCategories extends React.Component {
   static navigationOptions = {
