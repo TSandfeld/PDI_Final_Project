@@ -165,12 +165,23 @@ export default class EnterReceipt extends React.Component {
             renderItem={({item}) =>
                 <View style={styles.sameLineInput}>
                   <Text>Item</Text>
-                  <TextInput underlineColorAndroid='transparent' style={styles.inputTextItem} 
-                    onChangeText={ (text) => this.changeItemName(item.key, text)}></TextInput>
-                  <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}
-                    onChangeText={ (price) => this.changeItemPrice(item.key, price)}></TextInput>
+                  <TextInput 
+                    underlineColorAndroid='transparent' 
+                    style={styles.inputTextItem} 
+                    placeholder="xxxxxxxx"
+                    onChangeText={ (text) => this.changeItemName(item.key, text) }
+                  />
+                  <TextInput 
+                    underlineColorAndroid='transparent'
+                    style={styles.inputMoney}
+                    placeholder="0.00"
+                    onChangeText={ (price) => this.changeItemPrice(item.key, price) }
+                  />
                   <Text>Kr.</Text>
-                  <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}
+                  <TextInput 
+                    underlineColorAndroid='transparent' 
+                    style={styles.inputPieces}
+                    placeholder="1"
                     onChangeText={ (quantity) => this.changeItemQuantity(item.key, quantity)}></TextInput>
                   <Text>pcs.</Text>
                 </View>
@@ -263,29 +274,42 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     flex: 0,
     width: 90,
-    height: 25,
+    height: 30,
     borderColor: 'gray',
     borderWidth: 1,
     marginLeft: 4,
     marginRight: 10,
+    textAlign: 'center',
   },
   inputTextItem: {
     flex: 0,
     width: 130,
-    height: 25,
+    height: 30,
     borderColor: 'gray',
     borderWidth: 1,
     marginLeft: 4,
     marginRight: 10,
+    textAlign: 'center'
   },
   inputMoney:{
     paddingBottom: 0,
-    width: 40,
-    height: 25,
+    width: 80,
+    height: 30,
     borderColor: 'gray',
     borderWidth: 1,
     marginLeft: 4,
-    marginRight: 4
+    marginRight: 4,
+    textAlign: 'center'
+  },
+  inputPieces: {
+    paddingBottom: 0,
+    width: 30,
+    height: 30,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginLeft: 4,
+    marginRight: 4,
+    textAlign: 'center'
   },
   fieldView: {
     flexDirection: 'column',

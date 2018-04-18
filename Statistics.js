@@ -200,23 +200,6 @@ export default class Statistics extends React.Component {
             xAxisData.push(elem.category);
         });
 
-        console.log(data);
-        console.log(categories);
-
-        // const barData = [
-        //     {
-        //         values: data,
-        //         positive: {
-        //             fill: 'rgba(0, 65, 244, 0.2)',
-        //             // other react-native-svg supported props
-        //         },
-        //         negative: {
-        //             fill: 'rgba(134, 65, 244, 0.2)',
-        //             // other react-native-svg supported props
-        //         },
-        //     },
-        // ]
-
         const bottomContentInset = 10;
         const topContentInset = 30;
         const chartHeight = 200;
@@ -246,11 +229,6 @@ export default class Statistics extends React.Component {
                         horizontal={true}
                         showsHorizontalScrollIndicator={false}>
                         <View style={styles.xAxisContainer}>
-                            {/* <BarChart
-                                style={ { width: data.length*80, height: 200 } }
-                                data={ barData }
-                                contentInset={ { top: 30, bottom: bottomContentInset } }
-                            /> */}
                             <StackedBarChart
                                 style={ {  width: data.length*80, height: chartHeight } }
                                 keys={ keys }

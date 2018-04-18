@@ -246,14 +246,14 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     flex: 0,
     width: (win.width/2) - cellSideMargin*2,
-    height: 25,
+    height: 30,
     borderColor: 'gray',
     borderWidth: 1,
     margin: cellSideMargin/2,
   },
   dropdownMenu: {
-    width: 150,
-    height: 25,
+    width: 200,
+    height: 30,
     alignItems: 'center',
     justifyContent: 'center',
     borderColor: 'lightgray',
@@ -263,6 +263,7 @@ const styles = StyleSheet.create({
   }, 
   dropdownTextStyle: {
     color: 'black',
+    fontSize: 17,
   },
 });
 
