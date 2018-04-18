@@ -208,10 +208,10 @@ export default class Statistics extends React.Component {
 
         return (
             <View style={styles.container}>
-                <View style={styles.imageWelcomeContainer}>
+                {/* <View style={styles.imageWelcomeContainer}>
                     <Image style={styles.imageWelcome}
                         source={require('./Images/frontscreen.png')} />
-                </View>
+                </View> */}
 
                 <Text style={styles.monthTitle}> April </Text>
 
