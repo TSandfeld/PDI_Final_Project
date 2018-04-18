@@ -63,7 +63,8 @@ export default class EnterReceipt extends React.Component {
     this.state = { 
       items: [{key: "0"},{key: "1"}],
       store: "",
-      date: date
+      date: date,
+      refresh: false,
     };
 
   }
@@ -89,7 +90,7 @@ export default class EnterReceipt extends React.Component {
     var index = this.state.items.length
     this.state.items.push( {key: index.toString()} );
     data.push({key: index.toString(), name: "", price: 0.0, quantity: 0,category: ""});
-    console.log(this.state.items);
+    this.setState({refresh: !this.state.refresh})
   }
 
   changeItemName=(key, value)=>{
@@ -160,6 +161,7 @@ export default class EnterReceipt extends React.Component {
         <View style={styles.listContainer}>
           <FlatList
             data={this.state.items}
+            extraData={this.state.refresh}
             renderItem={({item}) =>
                 <View style={styles.sameLineInput}>
                   <Text>Item</Text>
@@ -290,7 +292,9 @@ const styles = StyleSheet.create({
   },
   sameLineInput: {
     flexDirection: 'row',
-    marginBottom: 5,
+    marginBottom: 10,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   horiLine: {
     borderColor: 'gray',
