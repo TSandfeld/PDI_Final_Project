@@ -20,7 +20,7 @@ import {
   TouchableHighlight,
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import { realm, itemSchema, receiptSchema } from './EnterReceipt.js';
+import { realm, itemSchema, receiptSchema, budgetItem, budgetSchema } from './EnterReceipt.js';
 
 export default class SeeReceipts extends React.Component {
   static navigationOptions = {
@@ -33,7 +33,7 @@ export default class SeeReceipts extends React.Component {
     this.state = {
         receiptData : [],
     };
-    realm.open({schema: [itemSchema, receiptSchema]})
+    realm.open({schema: [itemSchema, receiptSchema, budgetItem, budgetSchema]})
         .then(r => {
             let data = r.objects('Receipt');
             
@@ -58,13 +58,16 @@ export default class SeeReceipts extends React.Component {
     return totalPrice;
   }
 
+  _keyExtractor = (item, index) => index.toString();
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.headLine}>See receipts!</Text>
-        <FlatList data={this.state.receiptData}
+        <FlatList 
+          data={this.state.receiptData}
+          keyExtractor={this._keyExtractor}
           renderItem={({item,i}) =>
-          
           <View style={styles.sameLineContainer}>
             <TouchableHighlight onPress={ () => this.viewReceipt(item)}>  
               <View style={styles.sameColumn}>

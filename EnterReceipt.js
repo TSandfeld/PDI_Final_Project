@@ -34,6 +34,21 @@ export const receiptSchema = {
   }
 }
 
+export const budgetItem = {
+  name: 'BudgetItem',
+  properties: {
+    category: 'string',
+    budget: {type: 'double', default: 0.0}
+  }
+}
+
+export const budgetSchema = {
+  name: 'Budget',
+  properties: {
+    budgetItems: 'BudgetItem[]',
+  }
+}
+
 var data = [{key: "0", name: "", price: 0.0, quantity: 0, category: ""}, {key: "1", name: "", price: 0.0, quantity: 0, category: ""}];
 
 export default class EnterReceipt extends React.Component {
@@ -50,6 +65,7 @@ export default class EnterReceipt extends React.Component {
       store: "",
       date: date
     };
+
   }
 
   getToday() {
@@ -73,7 +89,7 @@ export default class EnterReceipt extends React.Component {
     var index = this.state.items.length
     this.state.items.push( {key: index.toString()} );
     data.push({key: index.toString(), name: "", price: 0.0, quantity: 0,category: ""});
-    console.log(this.state.items)
+    console.log(this.state.items);
   }
 
   changeItemName=(key, value)=>{
@@ -103,10 +119,9 @@ export default class EnterReceipt extends React.Component {
       }
     }
 
-    if (sortedData.length < 1) {
-      Alert.alert("Please enter items into the form before proceeding.")
+    if (sortedData.length < 1 || this.state.store == "") {
+      Alert.alert("Please enter items and store location into the form before proceeding.")
     } else {
-      console.log(sortedData);
       this.props.navigation.navigate('Categories',
                                      {
                                        receiptData: sortedData,
@@ -120,7 +135,7 @@ export default class EnterReceipt extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        
+
 
         <View style={styles.storeDateContainer}>
           <View style={styles.sameLineInput}>
@@ -148,7 +163,7 @@ export default class EnterReceipt extends React.Component {
             renderItem={({item}) =>
                 <View style={styles.sameLineInput}>
                   <Text>Item</Text>
-                  <TextInput underlineColorAndroid='transparent' style={styles.inputText} 
+                  <TextInput underlineColorAndroid='transparent' style={styles.inputTextItem} 
                     onChangeText={ (text) => this.changeItemName(item.key, text)}></TextInput>
                   <TextInput underlineColorAndroid='transparent' style={styles.inputMoney}
                     onChangeText={ (price) => this.changeItemPrice(item.key, price)}></TextInput>
@@ -195,6 +210,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: win.width,
     marginBottom: 20,
+    marginTop: 25,
   },
   listContainer: {
     flex: 1,
@@ -245,6 +261,15 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     flex: 0,
     width: 90,
+    height: 25,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginLeft: 4,
+    marginRight: 10,
+  },
+  inputTextItem: {
+    flex: 0,
+    width: 130,
     height: 25,
     borderColor: 'gray',
     borderWidth: 1,
