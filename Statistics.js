@@ -357,6 +357,7 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(0, 0, 0, 0.1)',
     },
     inputText: {
+        paddingBottom: 0,
         flex: 0,
         width: (win.width/2) - cellSideMargin*2,
         height: 25,
