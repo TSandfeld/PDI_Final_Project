@@ -282,6 +282,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   inputTextItem: {
+    paddingBottom: 0,
     flex: 0,
     width: 130,
     height: 30,
