@@ -14,11 +14,14 @@ import {
   Text,
   View,
   Button, 
+  Alert,
   Image,
   Dimensions,
   TouchableHighlight,
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
+import { ProgressCircle }  from 'react-native-svg-charts';
+import { realm, itemSchema, receiptSchema } from './EnterReceipt.js';
 
 
 export default class HomeScreen extends React.Component {
@@ -26,14 +29,77 @@ export default class HomeScreen extends React.Component {
     title: "Home"
   };
 
+  constructor(props) {
+    super(props);
+    let receipts = [];
+    this.state = {
+        receiptData: null,
+        totalSpent: 0,
+        budget: 10,
+        percentageSpent: 0,
+        progressColor: 'lightblue',
+        textColor: 'green'
+    };
+    realm.open({schema: [itemSchema, receiptSchema]})
+        .then(r => {
+            let data = r.objects('Receipt');
+            console.log(data[0]);
+            
+            this.setState( {
+                receiptData: data
+            });
+
+            this.retrieveData();
+        });
+        
+  }
+
+  componentDidMount() {
+    
+  }
+
+  retrieveData() {
+    let receipts = this.state.receiptData;
+    let sum = 0;
+    receipts.forEach(element => {
+        let list = element.items;
+        list.forEach(item => {
+            let totalPrice = item.price * item.quantity;
+            sum += totalPrice;
+        });
+    });
+    
+    this.setState({totalSpent: sum});
+    if(this.state.totalSpent > this.state.budget) {
+      this.setState({progressColor: 'red', textColor: 'red'})
+    } else {
+      this.setState({progressColor: 'lightblue', textColor: 'green'})
+
+    }
+    this.forceUpdate();
+
+  }
+
+
   render() {
+    
     return (
+      
       <View style={styles.container}>
-        <View style={styles.imageWelcomeContainer}>
-          <Image style={styles.imageWelcome}
-            source={require('./Images/frontscreen.png')} />
+        
+        <View style={styles.progressContainer}>
+          <ProgressCircle
+                style={ { height: 200 } }
+                progress={ (this.state.totalSpent/this.state.budget) }
+                progressColor={this.state.progressColor}/>
+            <View style={styles.totalspent}> 
+              <Text style={[styles.moneyText, {color: this.state.textColor}]}> Spent: {this.state.totalSpent} kr. </Text>
+              <Text style={styles.budgetText}> Budget: {this.state.budget} kr. </Text> 
+            </View>
+
         </View>
         <View style={styles.buttonContainer}>
+        
           <TouchableHighlight onPress={ () => this.props.navigation.navigate('Receipt')} style={styles.buttonEnterReceipt}>
             <Text style={styles.buttonText}>Enter Receipt</Text>
           </TouchableHighlight>
@@ -60,12 +126,34 @@ const styles = StyleSheet.create({
   imageWelcomeContainer: {
     flex: 1,
   },
+  progressContainer: {
+    flex: 0,
+    width: win.width,
+    marginTop: 20,
+    marginBottom: 20,
+  },
   buttonContainer: {
     flex: 1,
   },
   imageWelcome: {
     width: win.width,
     height: 200,
+  },
+  totalspent: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: win.width,
+    height: 200,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  moneyText: {
+    fontSize: 18,
+  },
+  budgetText: {
+    fontSize: 18,
+    marginTop: 20,
   },
   buttonEnterReceipt: {
     flex: 0,

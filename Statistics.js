@@ -9,7 +9,7 @@ import {
     Alert
   } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import { AreaChart, BarChart, XAxis, YAxis } from 'react-native-svg-charts'
+import { AreaChart, BarChart, XAxis, YAxis, ProgressCircle } from 'react-native-svg-charts'
 import * as shape from 'd3-shape'
 import { realm, itemSchema, receiptSchema } from './EnterReceipt.js';
 
@@ -112,7 +112,9 @@ export default class Statistics extends React.Component {
                 </View>
 
                 <Text style={styles.monthTitle}> February </Text>
+
                 <View style={styles.chartContainer}>
+                
                     <View style={styles.barChartContainer}>
                         <YAxis dataPoints={data}
                             style={ { width:50, height: 200 } }

@@ -201,6 +201,7 @@ const styles = StyleSheet.create({
     resizeMode: 'stretch'
   },
   inputText: {
+    paddingBottom: 0,
     flex: 0,
     width: (win.width/2) - cellSideMargin*2,
     height: 25,

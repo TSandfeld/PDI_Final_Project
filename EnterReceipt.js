@@ -12,6 +12,7 @@ import { StyleSheet,
   Alert} from 'react-native';
 import { StackNavigator } from 'react-navigation';
 
+
 export const realm = require('realm');
 
 export const itemSchema = {
@@ -119,10 +120,7 @@ export default class EnterReceipt extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.imgContainer}>
-          <Image style={styles.imageLogo} source={require('./Images/frontscreen.png')}>
-          </Image>
-        </View>
+        
 
         <View style={styles.storeDateContainer}>
           <View style={styles.sameLineInput}>
@@ -130,6 +128,7 @@ export default class EnterReceipt extends React.Component {
             <TextInput underlineColorAndroid='transparent' style={styles.inputText} 
             onChangeText={ (text) => this.setState({store: text}) }></TextInput> 
           </View>
+            
           <View style={styles.sameLineInput}>
             <Text>Date</Text>
             <TextInput underlineColorAndroid='transparent' style={styles.inputText} 
@@ -169,6 +168,7 @@ export default class EnterReceipt extends React.Component {
         </View>
 
       </View>
+
     );
   }
 }
@@ -179,6 +179,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  containerScroll: {
+    backgroundColor: '#4c69a5',
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -236,6 +242,7 @@ const styles = StyleSheet.create({
     resizeMode: 'stretch'
   },
   inputText: {
+    paddingBottom: 0,
     flex: 0,
     width: 90,
     height: 25,
@@ -245,6 +252,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   inputMoney:{
+    paddingBottom: 0,
     width: 40,
     height: 25,
     borderColor: 'gray',
