@@ -131,6 +131,7 @@ export default class EnterReceipt extends React.Component {
                                       })
     }
 
+    this.props.navigation.state.params = null
   }
 
   render() {
