@@ -82,6 +82,7 @@ export default class EnterCategories extends React.Component {
         });
       });
     
+    this.props.navigation.state.params = null;
     this.props.navigation.goBack(null);
     this.props.navigation.goBack(null);
   }

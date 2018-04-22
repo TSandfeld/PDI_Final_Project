@@ -69,6 +69,10 @@ export default class EnterReceipt extends React.Component {
 
   }
 
+  componentWillUnmount() {
+    data = [{key: "0", name: "", price: 0.0, quantity: 0, category: ""}, {key: "1", name: "", price: 0.0, quantity: 0, category: ""}];
+  }
+
   getToday() {
     var today = new Date();
     var dd = today.getDate();
